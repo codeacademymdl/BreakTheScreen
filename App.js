@@ -22,35 +22,35 @@ UIManager.setLayoutAnimationEnabledExperimental &&
     UIManager.setLayoutAnimationEnabledExperimental(true);
 
 export default class App extends Component {
-    // componentDidMount() {
+    componentDidMount() {
+        // SoundPlayer.onFinishedPlaying((success: boolean) => { // success is true when the sound is played
+        //     console.log('finished playing', success)
+        // })
+        SoundPlayer.onFinishedLoading(async (success: boolean) => {
+            console.log('finished loading', success)
+            // ready to `play()`, `getInfo()`, etc
+            console.log(await SoundPlayer.getInfo())
+        })
+    }
+
+    // unsubscribe when unmount
+    componentWillUnmount() {
+        SoundPlayer.unmount()
+    }
 
 
-    //     // SoundPlayer.onFinishedPlaying((success: boolean) => { // success is true when the sound is played
-    //     //   console.log('finished playing', success)
-    //     // })
-    //     SoundPlayer.onFinishedLoading(async (success: boolean) => {
-    //       console.log('finished loading', success)
-    //       // ready to `play()`, `getInfo()`, etc
-    //       console.log(await SoundPlayer.getInfo())
-    //     })
-    //   }
-      
-    //   // unsubscribe when unmount
-    //   componentWillUnmount() {
-    //     SoundPlayer.unmount()
-    //   }
-      
+    playSong = () => {
+        try {
+            const url = 'https://notificationsounds.com/soundfiles/f1b6f2857fb6d44dd73c7041e0aa0f19/file-c3_glass-beaking-1.mp3'
+            SoundPlayer.playUrl(url)
+            // SoundPlayer.playSoundFile('glass_break', 'mp3')
+        } catch (e) {
+            // alert('Cannot play the file')
+            console.log('cannot play the song file', e)
+        }
+    }
 
-    // playSong = () =>{
-    //     try {
-    //       SoundPlayer.playSoundFile('glass_break', 'mp3')
-    //     } catch (e) {
-    //       alert('Cannot play the file')
-    //       console.log('cannot play the song file', e)
-    //     }
-    //   }
 
-     
 
     // getInfo= async ()=> { // You need the keyword `async`
     //   try {
@@ -60,19 +60,28 @@ export default class App extends Component {
     //     console.log('There is no song playing', e)
     //   }
     // }
-   
-    //   onPressPlayButton = ()=> {
-    //     this.playSong();
-    //     // this.getInfo();
 
-    //   }
-     
+    onPressPlayButton = () => {
+        this.playSong();
+        SoundPlayer.onFinishedPlaying((success: boolean) => { // success is true when the sound is played
+            console.log('finished playing', success)
+        })
+        // SoundPlayer.onFinishedLoading(async (success: boolean) => {
+        //     console.log('finished loading', success)
+        //     // ready to `play()`, `getInfo()`, etc
+        //     console.log(await SoundPlayer.getInfo())
+        // })
+        // this.getInfo();
+
+    }
+
 
     crackScreen = () => {
-        
+        this.onPressPlayButton();
         let screenCracked = <ImageBackground
             style={[styles.ballSize, { width: '100%', height: '100%' }]}
             source={require('./crackedScreen.jpg')}
+
         />
         return screenCracked;
 
@@ -93,15 +102,15 @@ export default class App extends Component {
     render() {
 
 
-    
+
         return (
             <View style={styles.container}>
-            {/* <Button
-    onPress={this.onPressPlayButton}
-    title="Play"
-    color="#841584"
-    accessibilityLabel="Learn more about this purple button"
-    /> */}
+                {/* <Button
+                    onPress={this.onPressPlayButton}
+                    title="Play"
+                    color="#841584"
+                    accessibilityLabel="Learn more about this purple button"
+                /> */}
 
                 {this.state.w < 400 ? <TouchableOpacity onPress={this.onPressDo}>
                     <View style={styles.button}>
